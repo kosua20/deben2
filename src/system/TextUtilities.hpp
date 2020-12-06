@@ -72,6 +72,5 @@ public:
 
 	static size_t count(const std::string & s);
 
-	static double parseDouble(const std::string & s);
 
 };

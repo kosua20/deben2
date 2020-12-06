@@ -4,7 +4,7 @@
 #include "Operation.hpp"
 #include "system/System.hpp"
 
-using Totals = std::pair<double, double>;
+using Totals = std::pair<Amount, Amount>;
 
 class Listing {
 public:

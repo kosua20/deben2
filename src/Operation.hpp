@@ -3,6 +3,7 @@
 #include "Common.hpp"
 #include "Date.hpp"
 
+using Amount = long long;
 
 class Operation {
 public:
@@ -10,7 +11,7 @@ public:
 	 IN, OUT
 	};
 
-	Operation(float amount, const std::string & label, const Date & date);
+	Operation(Amount amount, const std::string & label, const Date & date);
 
 	Operation(const std::vector<std::string> & strs);
 	
@@ -18,15 +19,19 @@ public:
 
 	Type type() const;
 
-	double amount() const;
+	Amount amount() const;
 
 	std::string toString() const;
 
 	const Date & date() const;
 
+	static Amount parseAmount(const std::string & s);
+
+	static std::string writeAmount(const Amount & a, bool showPlusSign = false);
+	
 private:
 	Date _date;
 	std::string _label;
-	double _amount;
+	Amount _amount;
 	Type _type;
 };

@@ -63,10 +63,7 @@ void Listing::addOperation(const std::vector<std::string> & args){
 	_modified = true;
 
 	// Get amount.
-	const std::string amountStr = TextUtilities::trim(args[0], "\t ");
-	// Amount is positive only if + sign present.
-	const double sgn = amountStr[0] == '+' ? 1.0 : -1.0;
-	const double amount = sgn * std::abs(TextUtilities::parseDouble(amountStr));
+	const Amount amount = Operation::parseAmount(args[0]);
 
 	// Extract date if present.
 	Date date;
@@ -112,7 +109,7 @@ std::vector<Operation> Listing::operations(long last){
 }
 
 Totals Listing::totals(){
-	Totals totals = {0.0, 0.0};
+	Totals totals = {Amount(0), Amount(0)};
 	for(const auto & ope : _operations){
 		if(ope.type() == Operation::Type::IN){
 			totals.first += ope.amount();

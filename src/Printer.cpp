@@ -4,9 +4,9 @@
 #include <iostream>
 
 void Printer::printTotals(const Totals & totals, bool leadingNewline){
-	std::string tPos = toString(totals.first);
-	std::string tNeg = toString(totals.second);
-	std::string tTot = toString(totals.first + totals.second);
+	std::string tPos = Operation::writeAmount(totals.first);
+	std::string tNeg = Operation::writeAmount(totals.second);
+	std::string tTot = Operation::writeAmount(totals.first + totals.second);
 
 	const size_t digitCount = std::max(std::max(tPos.size(), tNeg.size()), tTot.size());
 
@@ -60,7 +60,7 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 	// Initial values for months header and footers.
 	const Date & initDate = operations[0].date();
 	int currentMonth = initDate.month();
-	Totals localTotals = {0.0, 0.0};
+	Totals localTotals = {Amount(0), Amount(0)};
 
 	// First month header.
 	fullStr += "\n" + _extSep + "\n" + monthHeader(initDate, maxIndexSize, maxLineSize);
@@ -75,7 +75,7 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 			fullStr += "\n" + monthHeader(op.date(), maxIndexSize, maxLineSize);
 			// Reset values.
 			currentMonth = op.date().month();
-			localTotals = {0.0, 0.0};
+			localTotals = {Amount(0), Amount(0)};
 		}
 		// Add current op amount.
 		if (op.type() == Operation::IN) {
@@ -111,9 +111,9 @@ std::string Printer::monthHeader(const Date & date, int pad, int length) {
 }
 
 std::string Printer::totalsFooter(const Totals & totals, int length) {
-	const std::string str0 = toString( totals.first );
-	const std::string str1 = toString( -totals.second );
-	const std::string str2 = toString( totals.first + totals.second );
+	const std::string str0 = Operation::writeAmount( totals.first );
+	const std::string str1 = Operation::writeAmount( -totals.second );
+	const std::string str2 = Operation::writeAmount( totals.first + totals.second );
 
 	std::string total = "Total: " + Terminal::green(str0) + " - " + Terminal::red(str1) + " = " + str2;
 	total = TextUtilities::padRight(total, length - 2 + (Terminal::supportsANSI()? 20 : 0), ' ');
@@ -126,18 +126,9 @@ std::string Printer::totalsFooter(const Totals & totals, int length) {
 
 	 const std::string dateStr = op.date().toString("%d/%m/%y");
 	 const std::string labelStr = TextUtilities::padRight(op.label(), shift+1, ' ');
-	 const std::string amountStr = (op.type() == Operation::IN ? "+" : "-") + toString(std::abs(op.amount()));
+	 const std::string amountStr = Operation::writeAmount(op.amount(), true);
 
 	 const std::string localStr = Terminal::bold(TextUtilities::padLeft(amountStr, 9, ' ')) + " " + _verSep + " " + dateStr + " " + _verSep + " " + Terminal::italic(labelStr);
 	 const std::string indexStr = TextUtilities::padLeft(std::to_string(index), pad, ' ');
 	 return _verSep + Terminal::dim(indexStr) + _verSep + localStr + _verSep;
  }
-
-std::string toString(double amount){
-	const std::string str = std::to_string(amount);
-	const std::string::size_type pos = str.find_first_of(".,");
-	if(pos == std::string::npos){
-		return str;
-	}
-	return str.substr(0, pos + 1 + 2);
-}

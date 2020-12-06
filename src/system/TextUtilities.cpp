@@ -145,18 +145,3 @@ bool TextUtilities::isNumber(const std::string & s){
 	const std::string::size_type pos = s.find_first_not_of("0123456789.,+-");
 	return pos == std::string::npos;
 }
-
-double TextUtilities::parseDouble(const std::string & s){
-	const std::string ns = TextUtilities::trim(s, "\t ");
-	const auto pos = ns.find_last_of(".,");
-
-	if(pos == std::string::npos){
-		return std::stod(ns);
-	}
-	const std::string dec = ns.substr(pos+1);
-	const std::string num = ns.substr(0, pos);
-	const double top = double(std::stol(num));
-	const double sgn = ns[0] == '-' ? -1.0 : 1.0;
-	const double bot = std::pow(10.0, -double(dec.size())) * double(std::stol(dec));
-	return sgn * (std::abs(top) + bot);
-}

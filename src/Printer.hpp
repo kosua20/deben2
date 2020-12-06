@@ -4,7 +4,6 @@
 #include "system/System.hpp"
 #include "Listing.hpp"
 
-std::string toString(double amount);
 
 class Printer {
 public:
