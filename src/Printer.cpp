@@ -44,13 +44,13 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 	const size_t maxLineSize = maxIndexSize + 27 + maxDescSize;
 
 	// Update separating strings.
-	_extSep = "";
-	_intSep = "";
-	_verSep = " ";
+	std::string extSep = "";
+	std::string  intSep = "";
+	std::string verSep = " ";
 	if(!Terminal::supportsANSI()){
-		_extSep = "+" + std::string(maxLineSize - 2, '-') + "+";
-		_intSep = "+" + std::string(maxIndexSize, '-') + "+" + std::string(10, '-') + "+" + std::string(10, '-') + "+" + std::string( maxDescSize + 2, '-') + "+";
-		_verSep = "|";
+		extSep = "+" + std::string(maxLineSize - 2, '-') + "+";
+		intSep = "+" + std::string(maxIndexSize, '-') + "+" + std::string(10, '-') + "+" + std::string(10, '-') + "+" + std::string( maxDescSize + 2, '-') + "+";
+		verSep = "|";
 	}
 
 	// Initial list header.
@@ -63,16 +63,16 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 	Totals localTotals = {Amount(0), Amount(0)};
 
 	// First month header.
-	fullStr += "\n" + _extSep + "\n" + monthHeader(initDate, maxIndexSize, maxLineSize);
+	fullStr += "\n" + extSep + "\n" + monthHeader(initDate, maxIndexSize, maxLineSize, verSep, intSep);
 
 
 	long i = totalCount - long(operations.size());
 	for(const auto & op : operations) {
 		// If new month, insert a footer then a header.
 		if(op.date().month() != currentMonth){
-			fullStr += "\n" + totalsFooter(localTotals, maxLineSize);
-			fullStr += "\n" + _extSep;
-			fullStr += "\n" + monthHeader(op.date(), maxIndexSize, maxLineSize);
+			fullStr += "\n" + totalsFooter(localTotals, maxLineSize, verSep, intSep);
+			fullStr += "\n" + extSep;
+			fullStr += "\n" + monthHeader(op.date(), maxIndexSize, maxLineSize, verSep, intSep);
 			// Reset values.
 			currentMonth = op.date().month();
 			localTotals = {Amount(0), Amount(0)};
@@ -85,19 +85,19 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 		}
 
 		// Add current operation.
-		const std::string opStr = operationString(op, i, maxIndexSize, maxDescSize );
+		const std::string opStr = operationString(op, i, maxIndexSize, maxDescSize, verSep);
 		fullStr += "\n" + opStr;
 		i += 1;
 	}
 
 	// Add final footer and separator.
-	fullStr += "\n" + totalsFooter(localTotals,  maxLineSize);
-	fullStr += "\n" + _extSep;
+	fullStr += "\n" + totalsFooter(localTotals,  maxLineSize, verSep, intSep);
+	fullStr += "\n" + extSep;
 	// Print the result.
 	std::cout << fullStr << "\n";
 }
 
-std::string Printer::monthHeader(const Date & date, int pad, int length) {
+std::string Printer::monthHeader(const Date & date, int pad, int length, const std::string & verSep, const std::string & intSep) {
 	static const std::vector<std::string> months = {
 		"January", "February", "Mars", "April", "May", "June", "July", "August", "Septembre", "Octobre", "Novembre", "Decembre"
 	};
@@ -107,10 +107,10 @@ std::string Printer::monthHeader(const Date & date, int pad, int length) {
 	monthStr = TextUtilities::padRight(monthStr, length-2, ' ');
 
 	const std::string vSep = Terminal::supportsANSI() ? " " : "|";
-	return _verSep + Terminal::inverse(monthStr) + _verSep + (Terminal::supportsANSI() ? "" : "\n" + _intSep);
+	return verSep + Terminal::inverse(monthStr) + verSep + (Terminal::supportsANSI() ? "" : "\n" + intSep);
 }
 
-std::string Printer::totalsFooter(const Totals & totals, int length) {
+std::string Printer::totalsFooter(const Totals & totals, int length, const std::string & verSep, const std::string & intSep) {
 	const std::string str0 = Operation::writeAmount( totals.first );
 	const std::string str1 = Operation::writeAmount( -totals.second );
 	const std::string str2 = Operation::writeAmount( totals.first + totals.second );
@@ -118,17 +118,17 @@ std::string Printer::totalsFooter(const Totals & totals, int length) {
 	std::string total = "Total: " + Terminal::green(str0) + " - " + Terminal::red(str1) + " = " + str2;
 	total = TextUtilities::padRight(total, length - 2 + (Terminal::supportsANSI()? 20 : 0), ' ');
 
-	return ( Terminal::supportsANSI() ? "" : _intSep + "\n" ) + _verSep + Terminal::brightBlackBg(Terminal::bold(total)) + _verSep;
+	return ( Terminal::supportsANSI() ? "" : intSep + "\n" ) + verSep + Terminal::brightBlackBg(Terminal::bold(total)) + verSep;
 }
 
 
- std::string Printer::operationString(const Operation & op, long index, int pad, int shift) {
+ std::string Printer::operationString(const Operation & op, long index, int pad, int shift, const std::string & verSep) {
 
 	 const std::string dateStr = op.date().toString("%d/%m/%y");
 	 const std::string labelStr = TextUtilities::padRight(op.label(), shift+1, ' ');
 	 const std::string amountStr = Operation::writeAmount(op.amount(), true);
 
-	 const std::string localStr = Terminal::bold(TextUtilities::padLeft(amountStr, 9, ' ')) + " " + _verSep + " " + dateStr + " " + _verSep + " " + Terminal::italic(labelStr);
+	 const std::string localStr = Terminal::bold(TextUtilities::padLeft(amountStr, 9, ' ')) + " " + verSep + " " + dateStr + " " + verSep + " " + Terminal::italic(labelStr);
 	 const std::string indexStr = TextUtilities::padLeft(std::to_string(index), pad, ' ');
-	 return _verSep + Terminal::dim(indexStr) + _verSep + localStr + _verSep;
+	 return verSep + Terminal::dim(indexStr) + verSep + localStr + verSep;
  }

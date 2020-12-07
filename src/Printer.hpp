@@ -8,21 +8,16 @@
 class Printer {
 public:
 
-	void printList(const std::vector<Operation> & operations, long totalCount);
+	static void printList(const std::vector<Operation> & operations, long totalCount);
 
 	static void printTotals(const Totals & totals, bool leadingNewline = true);
 
 private:
 
-	std::string monthHeader(const Date & date, int pad, int length);
+	static std::string monthHeader(const Date & date, int pad, int length, const std::string & verSep, const std::string & intSep);
 
-	std::string totalsFooter(const Totals & totals, int length);
+	static std::string totalsFooter(const Totals & totals, int length, const std::string & verSep, const std::string & intSep);
 
-	std::string operationString(const Operation & op, long index, int pad, int shift);
-
-	// Update separating strings.
-	std::string _extSep = "";
-	std::string _intSep = "";
-	std::string _verSep = " ";
+	static std::string operationString(const Operation & op, long index, int pad, int shift, const std::string & verSep);
 
 };

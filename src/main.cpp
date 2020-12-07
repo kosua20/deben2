@@ -64,6 +64,7 @@ public:
 				action = Action::ADD;
 				rawOp = arg.values;
 			}
+			// Default "add" action.
 			if(TextUtilities::isNumber(arg.key)){
 				action = Action::ADD;
 				rawOp = arg.values;
@@ -123,9 +124,8 @@ int main(int argc, char** argv){
 	if(config.action == Action::LIST){
 		auto ops = list.operations(config.count);
 		auto totals = list.totals();
-		Printer printer;
-		printer.printList(ops, list.count());
-		printer.printTotals(totals, false);
+		Printer::printList(ops, list.count());
+		Printer::printTotals(totals, false);
 	}
 	if(config.action == Action::DELETE){
 		list.removeOperation(config.index);
