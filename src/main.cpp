@@ -2,6 +2,7 @@
 #include "Strings.hpp"
 #include "Listing.hpp"
 #include "Printer.hpp"
+#include "Grapher.hpp"
 
 #include "system/Config.hpp"
 #include "system/System.hpp"
@@ -12,10 +13,9 @@
 #include <ctime>
 #include <iomanip>
 #include <chrono>
-#include <iostream>
 
 enum class Action {
-	ADD, DELETE, LIST, TOTAL
+	ADD, DELETE, LIST, TOTAL, GRAPH
 };
 
 class DebenConfig : public Config {
@@ -60,6 +60,16 @@ public:
 				}
 			}
 
+			if(arg.key == "graph" || arg.key == "g"){
+				action = Action::GRAPH;
+				if(!arg.values.empty()){
+					months = stol(arg.values[0]);
+				}
+				if(arg.values.size() > 1){
+					height = stol(arg.values[1]);
+				}
+			}
+
 			if(arg.key == "add" || arg.key == "a" ) {
 				action = Action::ADD;
 				rawOp = arg.values;
@@ -78,7 +88,10 @@ public:
 		registerSection("Operations");
 		registerArgument("add", "a", "Add an operation (--add is optional)", "[+,-]amount 'label' dd[/mm[/YYYY]]");
 		registerArgument("delete", "d", "Remove operation at index i (the last one by default)", "i");
+
+		registerSection("Display");
 		registerArgument("list", "l", "List the last n operations (40 by default)", "n");
+		registerArgument("graph", "g", "Display a plot of the last n months (12 by default) on a graph of m lines", "n [m]");
 		registerArgument("no-color", "nc", "Skip text decorations", "n");
 
 		registerSection("Infos");
@@ -92,6 +105,8 @@ public:
 	Action action = Action::TOTAL;
 	long index = -1;
 	long count = 40;
+	long months = 12;
+	long height = 24;
 	bool ascii = false;
 	// Messages.
 	bool version = false;
@@ -126,6 +141,10 @@ int main(int argc, char** argv){
 		auto totals = list.totals();
 		Printer::printList(ops, list.count());
 		Printer::printTotals(totals, false);
+	}
+	if(config.action == Action::GRAPH){
+		auto months = list.monthTotals(config.months);
+		Grapher::graphMonths(months, list.totals(), config.height);
 	}
 	if(config.action == Action::DELETE){
 		list.removeOperation(config.index);
