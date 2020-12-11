@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
+#include "Operation.hpp"
 #include "system/System.hpp"
-#include "Listing.hpp"
 
 
 class Printer {

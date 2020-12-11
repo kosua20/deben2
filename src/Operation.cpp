@@ -97,3 +97,7 @@ std::string Operation::writeAmount(const Amount & a, bool showPlusSign){
 	return sgn + stru + "." + strd ;
 }
 
+size_t Operation::amountLength(const Amount & a){
+	return size_t(std::ceil(std::log10(a))+1 + (a < 0 ? 1: 0));
+}
+

@@ -5,6 +5,8 @@
 
 using Amount = long long;
 
+using Totals = std::pair<Amount, Amount>;
+
 class Operation {
 public:
 	enum Type {
@@ -28,7 +30,9 @@ public:
 	static Amount parseAmount(const std::string & s);
 
 	static std::string writeAmount(const Amount & a, bool showPlusSign = false);
-	
+
+	static size_t amountLength(const Amount & a);
+
 private:
 	Date _date;
 	std::string _label;
