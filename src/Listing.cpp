@@ -108,6 +108,50 @@ std::vector<Operation> Listing::operations(long last){
 	return select;
 }
 
+
+std::vector<Totals> Listing::monthTotals(long last){
+	// We need unique comparison of months.
+	const auto hashDate = [](const Date & date){
+		return long(date.year()) * 12 + long(date.month());
+	};
+
+	// Get current month.
+	const Date now;
+	const long currentMonth = hashDate(now);
+	const long earliestMonth = std::max(currentMonth - last + 1, long(0));
+	// We need to find the earliest record from this month.
+	const auto firstOp = std::find_if(_operations.begin(), _operations.end(), [earliestMonth, &hashDate](const Operation & op){
+		return hashDate(op.date()) >= earliestMonth;
+	});
+
+	std::vector<Totals> totals = { {Amount(0), Amount(0)}};
+
+	long ongoingMonth = earliestMonth;
+
+	for(auto op = firstOp; op != _operations.end(); ++op ){
+		const long opMonth = hashDate(op->date());
+		if(opMonth != ongoingMonth){
+			for(long mid = ongoingMonth + 1; mid <= opMonth; ++mid){
+				totals.emplace_back(Amount(0), Amount(0));
+			}
+			ongoingMonth = opMonth;
+		}
+
+		auto & tots = totals.back();
+		if(op->type() == Operation::IN){
+			tots.first += op->amount();
+		} else {
+			tots.second += op->amount();
+		}
+	}
+	// Handle missing months after last record.
+	for(long mid = ongoingMonth + 1; mid <= currentMonth; ++mid){
+		totals.emplace_back(Amount(0), Amount(0));
+	}
+
+	return totals;
+}
+
 Totals Listing::totals(){
 	Totals totals = {Amount(0), Amount(0)};
 	for(const auto & ope : _operations){

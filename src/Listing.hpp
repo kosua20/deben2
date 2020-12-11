@@ -17,6 +17,8 @@ public:
 
 	std::vector<Operation> operations(long last);
 
+	std::vector<Totals> monthTotals(long last);
+
 	Totals totals();
 
 	long count() const;
