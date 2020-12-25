@@ -15,7 +15,7 @@
 #include <chrono>
 
 enum class Action {
-	ADD, DELETE, LIST, TOTAL, GRAPH
+	ADD, REMOVE, LIST, TOTAL, GRAPH
 };
 
 class DebenConfig : public Config {
@@ -48,7 +48,7 @@ public:
 			}
 
 			if(arg.key == "delete" || arg.key == "d") {
-				action = Action::DELETE;
+				action = Action::REMOVE;
 				if(!arg.values.empty()){
 					index = stol(arg.values[0]);
 				}
@@ -146,7 +146,7 @@ int main(int argc, char** argv){
 		auto months = list.monthTotals(config.months);
 		Grapher::graphMonths(months, list.totals(), config.height);
 	}
-	if(config.action == Action::DELETE){
+	if(config.action == Action::REMOVE){
 		list.removeOperation(config.index);
 		Printer::printTotals(list.totals());
 	}

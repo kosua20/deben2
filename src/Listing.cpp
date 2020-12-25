@@ -98,7 +98,7 @@ std::vector<Operation> Listing::operations(long last){
 		return _operations;
 	}
 	const long opSize = long(_operations.size());
-	const size_t begin = std::max(opSize - last, 0l);
+	const long begin = std::max(opSize - last, 0l);
 	std::vector<Operation> select;
 	select.reserve(last);
 
@@ -138,7 +138,7 @@ std::vector<Totals> Listing::monthTotals(long last){
 		}
 
 		auto & tots = totals.back();
-		if(op->type() == Operation::IN){
+		if(op->type() == Operation::In){
 			tots.first += op->amount();
 		} else {
 			tots.second += op->amount();
@@ -155,7 +155,7 @@ std::vector<Totals> Listing::monthTotals(long last){
 Totals Listing::totals(){
 	Totals totals = {Amount(0), Amount(0)};
 	for(const auto & ope : _operations){
-		if(ope.type() == Operation::Type::IN){
+		if(ope.type() == Operation::Type::In){
 			totals.first += ope.amount();
 		} else {
 			totals.second += ope.amount();

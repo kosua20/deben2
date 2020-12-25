@@ -36,12 +36,12 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 
 	// Compute various needed lengths.
 	const std::string tCountStr = std::to_string(totalCount);
-	const size_t maxIndexSize = tCountStr.size();
-	size_t maxDescSize = 0;
+	const int maxIndexSize = int(tCountStr.size());
+	int maxDescSize = 0;
 	for(const auto & op : operations){
-		maxDescSize = std::max(maxDescSize, TextUtilities::count(op.label()));
+		maxDescSize = std::max(maxDescSize, int(TextUtilities::count(op.label())));
 	}
-	const size_t maxLineSize = maxIndexSize + 27 + maxDescSize;
+	const int maxLineSize = maxIndexSize + 27 + maxDescSize;
 
 	// Update separating strings.
 	std::string extSep = "";
@@ -78,7 +78,7 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 			localTotals = {Amount(0), Amount(0)};
 		}
 		// Add current op amount.
-		if (op.type() == Operation::IN) {
+		if (op.type() == Operation::In) {
 			localTotals.first += op.amount();
 		} else {
 			localTotals.second += op.amount();

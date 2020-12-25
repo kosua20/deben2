@@ -28,7 +28,7 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 		minMax.second = std::max(minMax.second, currMax);
 	}
 	// Adjust the bottom of the range.
-	minMax.first *= 0.9f;
+	minMax.first *= 0.9;
 
 	// We want the max to be N characters high.
 	const float totalSegm = float(minMax.second - minMax.first) / height;
@@ -50,7 +50,7 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 
 	// Horizontal axis labels will display the month index, we need the first one.
 	Date now;
-	int firstMonth = now.month() - mCount + 1;
+	int firstMonth = now.month() - int(mCount) + 1;
 	while(firstMonth < 0){
 		firstMonth += 12;
 	}

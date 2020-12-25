@@ -1,6 +1,8 @@
 #include "Date.hpp"
 #include "system/TextUtilities.hpp"
 
+#include <iomanip>
+
 Date::Date(){
 	// Initialize the date at the current time.
 	std::time_t t = std::time(0);

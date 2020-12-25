@@ -10,7 +10,7 @@ using Totals = std::pair<Amount, Amount>;
 class Operation {
 public:
 	enum Type {
-	 IN, OUT
+	 In, Out
 	};
 
 	Operation(Amount amount, const std::string & label, const Date & date);

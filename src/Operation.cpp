@@ -5,7 +5,7 @@
 #include "system/TextUtilities.hpp"
 
 Operation::Operation(Amount amount, const std::string & label, const Date & date):
-	_date(date), _label(label), _amount(amount), _type(amount > Amount(0) ? IN : OUT){
+	_date(date), _label(label), _amount(amount), _type(amount > Amount(0) ? In : Out){
 
 }
 
@@ -14,7 +14,7 @@ Operation::Operation(const std::vector<std::string> & strs){
 	_date = Date(strs[0]);
 	// manual amount parsing
 	_amount = Operation::parseAmount(strs[1]);
-	_type = _amount > Amount(0) ? Type::IN : Type::OUT;
+	_type = _amount > Amount(0) ? Type::In : Type::Out;
 
 	bool first = true;
 	for(size_t sid = 2; sid < strs.size(); ++sid){
@@ -29,7 +29,7 @@ Operation::Operation(const std::vector<std::string> & strs){
 
 std::string Operation::toString() const {
 	const std::string dateStr = _date.toString("%Y/%m/%d");
-	const std::string signStr = (_type == Type::IN ? "+" : "-");
+	const std::string signStr = (_type == Type::In ? "+" : "-");
 	const std::string amountStr = Operation::writeAmount(std::abs(_amount), true);
 	return dateStr + "\t" + signStr + amountStr + "\t" + _label;
 }
