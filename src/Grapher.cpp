@@ -3,7 +3,7 @@
 #include "system/TextUtilities.hpp"
 
 #include <map>
-#include <iostream>
+#include <sstream>
 
 void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & totals, int height){
 
@@ -61,10 +61,11 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 	// Graph background character.
 	const std::string empty = Terminal::blackBg(" ");
 
+	std::stringstream content;
 	// Start graph top edge.
-	std::cout << "\n";
+	content << "\n";
 	if(!Terminal::supportsANSI()){
-		std::cout << padBegin << hSep;
+		content << padBegin << hSep;
 	}
 
 	// Graph lines: display label if on the right line,
@@ -79,10 +80,10 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 		} else {
 			padLine = padBegin;
 		}
-		std::cout << Terminal::italic(TextUtilities::padLeft(padLine, padSize, ' '));
+		content << Terminal::italic(TextUtilities::padLeft(padLine, padSize, ' '));
 
 		// Vertical opening graph edge + initial spacing.
-		std::cout << vSep << empty << empty << empty;
+		content << vSep << empty << empty << empty;
 
 		// Compute value for this line.
 		const float value = float(y) * totalSegm + float(minMax.first);
@@ -93,7 +94,7 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 			const int subPixel = x % 3;
 			// Check if we are between two bars.
 			if( subPixel == 0 || (!Terminal::supportsANSI() && subPixel == 2)){
-				std::cout << empty;
+				content << empty;
 				continue;
 			}
 
@@ -101,7 +102,7 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 			const int mid = x/3;
 			// If we are too much to the right, just background.
 			if(mid >= int(mCount)){
-				std::cout << empty;
+				content << empty;
 				continue;
 			}
 
@@ -111,53 +112,53 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 			const bool containsOut = -months[mid].second > value && -months[mid].second <= valueUp;
 			// If both, display a combined indicator.
 			if(containsIn && containsOut){
-				std::cout << Terminal::brightYellow(Terminal::brightYellowBg("*"));
+				content << Terminal::brightYellow(Terminal::brightYellowBg("*"));
 			} else if(containsIn){
-				std::cout << Terminal::green(Terminal::greenBg("+"));
+				content << Terminal::green(Terminal::greenBg("+"));
 			} else if(containsOut){
-				std::cout << Terminal::red(Terminal::redBg("x"));
+				content << Terminal::red(Terminal::redBg("x"));
 			} else if(float(cumulMonths[mid]) > value){
 				// Finally check if we are below the top of the bar.
-				std::cout << Terminal::brightBlack(Terminal::brightBlackBg("█"));
+				content << Terminal::brightBlack(Terminal::brightBlackBg("█"));
 			} else {
-				std::cout << empty;
+				content << empty;
 			}
 		}
 		// Closing graph edge.
-		std::cout << vSep << "\n";
+		content << vSep << "\n";
 	}
 
 	// Edge below graph.
 	if(!Terminal::supportsANSI()){
-		std::cout << padBegin << hSep;
+		content << padBegin << hSep;
 	}
 
 	// Horizontal axis labels: months.
 	// Initial padding, no bacground this time.
-	std::cout << padBegin << vSep << "   ";
+	content << padBegin << vSep << "   ";
 	// Cover each 'pixel'
 	for(int x = 1; x < graphWidth-1; ++x){
 		// Find the current month.
 		int mid = x/3;
 		// If we are too much to the right, skip.
 		if(mid >= int(mCount)){
-			std::cout << " ";
+			content << " ";
 			continue;
 		}
 		// If we are at the same horizontal location as the bar, print the month.
 		if(x%3 == 1){
 			const std::string monthStr = std::to_string((firstMonth + mid - 1)%12 + 1);
-			std::cout << Terminal::bold(TextUtilities::padRight(monthStr, 3, ' '));
+			content << Terminal::bold(TextUtilities::padRight(monthStr, 3, ' '));
 		}
 	}
 	// End of the label line.
-	std::cout << vSep << "\n";
+	content << vSep << "\n";
 
 	// Separator between labels and legend.
 	if(!Terminal::supportsANSI()){
-		std::cout << padBegin << hSep;
+		content << padBegin << hSep;
 	} else {
-		std::cout << "\n";
+		content << "\n";
 	}
 
 	// Width of the graph - width of the legend text.
@@ -170,20 +171,24 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 	const std::string legendPad = legendSize != 0 ? std::string(legendSize/2, ' ') : "";
 
 	// Generate the full line with initial padding and text.
-	std::cout << padBegin << vSep;
-	std::cout << legendPad << legendText << legendPad;
+	content << padBegin << vSep;
+	content << legendPad << legendText << legendPad;
 	// Compensate odd line length alignment.
 	if(legendSize % 2 == 1){
-		std::cout << " ";
+		content << " ";
 	}
 	// End of the line legend.
-	std::cout << vSep << "\n";
+	content << vSep << "\n";
 
 	// Closing separator.
 	if(!Terminal::supportsANSI()){
-		std::cout << padBegin << hSep << "\n";
+		content << padBegin << hSep << "\n";
 	} else {
-		std::cout << "\n";
+		content << "\n";
 	}
+
+
+	Terminal::outputUnicode( content.str() );
+	
 
 }

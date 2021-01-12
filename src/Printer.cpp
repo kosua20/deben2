@@ -1,7 +1,6 @@
 #include "Printer.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/Terminal.hpp"
-#include <iostream>
 
 void Printer::printTotals(const Totals & totals, bool leadingNewline){
 	std::string tPos = Operation::writeAmount(totals.first);
@@ -21,16 +20,19 @@ void Printer::printTotals(const Totals & totals, bool leadingNewline){
 	const std::string negStr = " Out.:  " + tNeg + " ";
 	const std::string totStr = " Total: " + tTot + " ";
 
-	std::cout << (leadingNewline ? "\n" : "") << sepaT;
-	std::cout << vertT << Terminal::blackBg(Terminal::bold(Terminal::green(posStr))) << vertT << "\n";
-	std::cout << vertT << Terminal::blackBg(Terminal::bold(Terminal::red(negStr))) << vertT << "\n";
-	std::cout << vertT << Terminal::blackBg(Terminal::bold(Terminal::white(totStr))) << vertT << "\n";
-	std::cout << sepaT << "\n";
+	std::stringstream out;
+	out << (leadingNewline ? "\n" : "") << sepaT;
+	out << vertT << Terminal::blackBg(Terminal::bold(Terminal::green(posStr))) << vertT << "\n";
+	out << vertT << Terminal::blackBg(Terminal::bold(Terminal::red(negStr))) << vertT << "\n";
+	out << vertT << Terminal::blackBg(Terminal::bold(Terminal::white(totStr))) << vertT << "\n";
+	out << sepaT << "\n";
+
+	Terminal::outputUnicode(out.str());
 }
 
 void Printer::printList(const std::vector<Operation> & operations, long totalCount){
 	if(operations.empty()) {
-		std::cout << Terminal::italic("Empty list") << std::endl;
+		Terminal::outputUnicode(Terminal::italic( "Empty list" ) + "\n");
 		return;
 	}
 
@@ -94,7 +96,7 @@ void Printer::printList(const std::vector<Operation> & operations, long totalCou
 	fullStr += "\n" + totalsFooter(localTotals,  maxLineSize, verSep, intSep);
 	fullStr += "\n" + extSep;
 	// Print the result.
-	std::cout << fullStr << "\n";
+	Terminal::outputUnicode(fullStr + "\n");
 }
 
 std::string Printer::monthHeader(const Date & date, int pad, int length, const std::string & verSep, const std::string & intSep) {
@@ -120,7 +122,6 @@ std::string Printer::totalsFooter(const Totals & totals, int length, const std::
 
 	return ( Terminal::supportsANSI() ? "" : intSep + "\n" ) + verSep + Terminal::brightBlackBg(Terminal::bold(total)) + verSep;
 }
-
 
  std::string Printer::operationString(const Operation & op, long index, int pad, int shift, const std::string & verSep) {
 
