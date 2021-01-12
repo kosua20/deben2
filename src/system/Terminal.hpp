@@ -15,6 +15,8 @@ public:
 
 	static void disableANSI();
 
+	static void outputUnicode( const std::string& str );
+
 	static std::string black(const std::string & s);
 
 	static std::string red(const std::string & s);

@@ -10,12 +10,13 @@
 
 #ifdef _WIN32
 
-WCHAR * widen(const std::string & str) {
+std::wstring widen(const std::string & str) {
 	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
 	WCHAR * arr	= new WCHAR[size];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, static_cast<LPWSTR>(arr), size);
-	// \warn Will leak on Windows.
-	return arr;
+	std::wstring res( arr );
+	delete[] arr;
+	return res;
 }
 
 std::string narrow(WCHAR * str) {
@@ -27,8 +28,8 @@ std::string narrow(WCHAR * str) {
 
 #else
 
-const char * widen(const std::string & str) {
-	return str.c_str();
+std::string widen(const std::string & str) {
+	return str;
 }
 std::string narrow(char * str) {
 	return std::string(str);

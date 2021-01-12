@@ -9,6 +9,8 @@
 #include <unistd.h>
 #endif
 
+#include <iostream>
+
 bool Terminal::_supportChecked = false;
 bool Terminal::_supportANSI = false;
 
@@ -40,6 +42,19 @@ void Terminal::disableANSI(){
 	_supportANSI = false;
 	_supportChecked = true;
 
+}
+
+void Terminal::outputUnicode( const std::string& str ) {
+#ifdef _WIN32
+	const int size = MultiByteToWideChar( CP_UTF8, 0, str.c_str(), -1, nullptr, 0 );
+	WCHAR* arr = new WCHAR[size];
+	MultiByteToWideChar( CP_UTF8, 0, str.c_str(), -1, static_cast<LPWSTR>( arr ), size );
+	std::wstring res( arr );
+	delete[] arr;
+	std::wcout << res << std::flush;
+#else
+	std::cout << str << std::flush;
+#endif
 }
 
 std::string Terminal::black(const std::string & s){
