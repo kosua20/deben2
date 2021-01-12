@@ -3,7 +3,8 @@
 #include "system/System.hpp"
 
 Listing::Listing(const fs::path & path){
-	const std::string file = System::loadStringFromFile(path);
+	std::string file = System::loadStringFromFile(path);
+	TextUtilities::replace( file, "\r\n", "\n" );
 	const auto lines = TextUtilities::split(file, "\n", true);
 
 	for(const auto & lineRaw : lines){
@@ -15,7 +16,11 @@ Listing::Listing(const fs::path & path){
 			_comments.push_back(line);
 			continue;
 		}
-		_operations.emplace_back(TextUtilities::split(line, "\t", true));
+		const auto toks = TextUtilities::split( line, "\t", true );
+		if( toks.empty() ) {
+			continue;
+		}
+		_operations.emplace_back( toks );
 	}
 }
 
