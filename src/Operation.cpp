@@ -30,7 +30,7 @@ Operation::Operation(const std::vector<std::string> & strs){
 std::string Operation::toString() const {
 	const std::string dateStr = _date.toString("%Y/%m/%d");
 	const std::string signStr = (_type == Type::In ? "+" : "-");
-	const std::string amountStr = Operation::writeAmount(std::abs(_amount), true);
+	const std::string amountStr = Operation::writeAmount(std::abs(_amount), false);
 	return dateStr + "\t" + signStr + amountStr + "\t" + _label;
 }
 
@@ -91,7 +91,10 @@ std::string Operation::writeAmount(const Amount & a, bool showPlusSign){
 	const long long decs = std::abs(a) % 100;
 	const std::string sgn = a >= 0 ? (showPlusSign ? "+" : "") : "-";
 
-	const std::string stru = std::to_string(unts);
+	std::string stru = std::to_string(unts);
+	if( stru.size() > 0 && stru[0] == '+' ) {
+		stru = stru.substr( 1 );
+	}
 	const std::string strd = TextUtilities::padLeft(std::to_string(decs), 2, '0');
 
 	return sgn + stru + "." + strd ;
