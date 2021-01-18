@@ -17,6 +17,21 @@ bool Terminal::_supportANSI = false;
 bool Terminal::supportsANSI(){
 	if(!_supportChecked){
 		_supportANSI = false;
+
+#ifdef _WIN32
+		// Enable color output.
+		HANDLE h = GetStdHandle( STD_OUTPUT_HANDLE );
+		if( h != INVALID_HANDLE_VALUE ) {
+			DWORD dwMode = 0;
+			if( GetConsoleMode( h, &dwMode ) ) {
+				dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+				if( SetConsoleMode( h, dwMode ) ) {
+					_supportANSI = true;
+				}
+			}
+		}
+		
+#else
 		// Check if we are in a terminal.
 		char* termName = std::getenv("TERM");
 		if(termName != nullptr){
@@ -25,15 +40,13 @@ bool Terminal::supportsANSI(){
 
 			if(nameLow != "dumb"){
 				// Check if we are redirected to a file.
-#ifdef _WIN32
-				bool istty = _isatty(_fileno(stdout)) != 0;
-#else
 				bool istty = isatty(fileno(stdout)) != 0;
-#endif
 				_supportANSI = istty;
 			}
 		}
+#endif
 		_supportChecked = true;
+		
 	}
 	return _supportANSI;
 }
