@@ -43,6 +43,9 @@ public:
 			if(arg.key == "license") {
 				license = true;
 			}
+			if(arg.key == "money") {
+				bonus = true;
+			}
 			if(arg.key == "no-color" || arg.key == "nc") {
 				ascii = true;
 			}
@@ -111,7 +114,7 @@ public:
 	// Messages.
 	bool version = false;
 	bool license = false;
-	
+	bool bonus = false;
 };
 
 
@@ -124,6 +127,9 @@ int main(int argc, char** argv){
 		return 0;
 	} else if(config.license){
 		Log::Info() << licenseMessage << std::endl;
+		return 0;
+	} else if(config.bonus){
+		Log::Info() << bonusMessage << std::endl;
 		return 0;
 	} else if(config.showHelp(config.path.empty())){
 		return 0;
