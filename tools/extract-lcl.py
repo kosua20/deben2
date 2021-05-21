@@ -103,5 +103,5 @@ rows = device.rows
 
 #Write rows to file.
 for label, date, amount in rows:
-    fout.write("{}  {:+8.2f}  {}\n".format(date, amount, label))
+    fout.write("{:%Y/%m/%d}\t{:+.2f}\t{}\n".format(date, amount, label))
 fout.close()
