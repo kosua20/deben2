@@ -13,12 +13,16 @@
     Remove operation at index i (the last one by default)
 - `--l,--list <n>`  
     List the last n operations (40 by default)
+- `--g,--graph <n [m]>`  
+    Display a plot of the last n months (12 by default) on a graph of m lines
 
 ### Modifiers
+
 - `--nc,--no-color`  
     Do not use color ANSI modifiers in the output.
 
 ### Infos
+
 - `--v,--version`  
     Displays the current Thoth version.
 - `--license`  
@@ -34,4 +38,3 @@ Lines beginning with a `#` will be ignored (but preserved).
 ## Future improvements
 
 - add bulk import
-- add visualisation
