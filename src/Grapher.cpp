@@ -28,7 +28,7 @@ void Grapher::graphMonths(const std::vector<Totals> & months, const Totals & tot
 		minMax.second = std::max(minMax.second, currMax);
 	}
 	// Adjust the bottom of the range.
-	minMax.first *= 0.9;
+	minMax.first = Amount(0.9f * float(minMax.first));
 
 	// We want the max to be N characters high.
 	const float totalSegm = float(minMax.second - minMax.first) / height;
